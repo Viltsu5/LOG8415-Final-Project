@@ -55,7 +55,7 @@ if __name__ == "__main__":
         worker_userdata = file.read()
 
     print("Creating instances...")
-    # 1x t2.large for orchestrator & 4x t2.large for worker instances
+    # 3x t2.micro for 1 manafer and 2 worker instances
     i.createInstance('t2.micro', 1, 1, key_pair, security_id, subnet_id, manager_userdata, "manager-instance")
-    i.createInstance('t2.micro', 2, 2, key_pair, security_id, subnet_id, worker_userdata, "worker-instance")
-    time.sleep(240)
+    #i.createInstance('t2.micro', 2, 2, key_pair, security_id, subnet_id, worker_userdata, "worker-instance")
+    #time.sleep(240)
