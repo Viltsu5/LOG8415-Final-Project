@@ -63,12 +63,11 @@ Inputs:
 Outputs: 
     instances (list) - A list of created instance objects.
 '''
-def createInstance(instanceType: str, minCount: int, maxCount: int, key_pair, security_id: str, subnet_id: str, user_data: str, instance_name: str):
+def createInstance(instanceType: str, minCount: int, maxCount: int, key_pair, security_id: str, subnet_id: str, ip: str,  user_data: str, instance_name: str):
     
     # Create EC2 Client
     session = boto3.Session()
     ec2 = session.resource('ec2')
-
 
     instances = ec2.create_instances(
         ImageId='ami-0e86e20dae9224db8',
@@ -79,16 +78,7 @@ def createInstance(instanceType: str, minCount: int, maxCount: int, key_pair, se
         SecurityGroupIds=[security_id],
         SubnetId=subnet_id,
         UserData=user_data,
-        BlockDeviceMappings=[
-                {   #Increased size to 20GB to fit packages
-                    'DeviceName': '/dev/sda1',
-                    'Ebs': {
-                        'VolumeSize': 20, # Probably dont need 20Gib, modify later
-                        'VolumeType': 'gp2',
-                        'DeleteOnTermination': True,
-                    },
-                },
-            ]
+        PrivateIpAddress=ip
     )
 
     # Wait until the instances are running
