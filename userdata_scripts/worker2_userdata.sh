@@ -14,6 +14,7 @@ relay-log=relay-log
 gtid_mode=ON                   
 enforce_gtid_consistency=ON    
 log-replica-updates=ON
+super_read_only=ON
 EOF'
 
 # Restart MySQL service
