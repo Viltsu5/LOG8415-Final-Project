@@ -61,10 +61,10 @@ if __name__ == "__main__":
     # 3x t2.micro for 1 manager and 2 worker instances
     i.createInstance('t2.micro', 1, 1, key_pair, security_id, subnet_id, ips[0], manager_userdata, "manager-instance")
 
-    print("Wait for manager to be created and configured (4 minutes)...")
+    print("Wait for manager to be created and configured (3 minutes)...")
 
-    time.sleep(240)
+    time.sleep(180)
 
-    i.createInstance('t2.micro', 1, 1, key_pair, security_id, subnet_id, ips[1], worker1_userdata, "worker-instance")
-    i.createInstance('t2.micro', 1, 1, key_pair, security_id, subnet_id, ips[2], worker2_userdata, "worker-instance")
+    i.createInstance('t2.micro', 1, 1, key_pair, security_id, subnet_id, ips[1], worker1_userdata, "worker-instance-1")
+    i.createInstance('t2.micro', 1, 1, key_pair, security_id, subnet_id, ips[2], worker2_userdata, "worker-instance-2")
 
