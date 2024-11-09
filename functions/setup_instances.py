@@ -50,6 +50,13 @@ def createSecurityGroup(vpc_id: str, group_name: str):
                 'ToPort': 3306,
                 'IpRanges': [{'CidrIp': '0.0.0.0/0'}]
             },
+
+             {
+                'IpProtocol': 'tcp',
+                'FromPort': 5000,
+                'ToPort': 5000,
+                'IpRanges': [{'CidrIp': '0.0.0.0/0'}]
+            },
     
         ]
     )

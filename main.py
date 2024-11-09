@@ -56,15 +56,31 @@ if __name__ == "__main__":
     with open('userdata_scripts/worker2_userdata.sh', 'r') as file:
         worker2_userdata = file.read()
 
-    print("Creating instances...")
+    with open('userdata_scripts/proxy_userdata.sh', 'r') as file:
+        proxy_userdata = file.read()
+
+    with open('userdata_scripts/stand_alone.sh', 'r') as file:
+        stand_alone = file.read()
+
+    print("Creating instances...\n")
 
     # 3x t2.micro for 1 manager and 2 worker instances
-    i.createInstance('t2.micro', 1, 1, key_pair, security_id, subnet_id, ips[0], manager_userdata, "manager-instance")
+    i.createInstance('t2.micro', 1, 1, key_pair, security_id, subnet_id, ips[0], manager_userdata, "manager")
 
-    print("Wait for manager to be created and configured (3 minutes)...")
+    print("Wait for manager to be created and configured (3 minutes)...\n")
 
-    time.sleep(180)
+    time.sleep(120)
 
-    i.createInstance('t2.micro', 1, 1, key_pair, security_id, subnet_id, ips[1], worker1_userdata, "worker-instance-1")
-    i.createInstance('t2.micro', 1, 1, key_pair, security_id, subnet_id, ips[2], worker2_userdata, "worker-instance-2")
+    i.createInstance('t2.micro', 1, 1, key_pair, security_id, subnet_id, ips[1], worker1_userdata, "worker-1")
+    i.createInstance('t2.micro', 1, 1, key_pair, security_id, subnet_id, ips[2], worker2_userdata, "worker-2")
+    
+    print("Wait for workers to be created and configured (2 minutes)...\n")
+    time.sleep(90)
 
+    # 1x t2.large for proxy instance
+    i.createInstance('t2.large', 1, 1, key_pair, security_id, subnet_id, ips[3], proxy_userdata, "proxy")
+    print("Wait for proxy to be created and configured (1 minute)...\n")
+    time.sleep(60)
+
+    i.createInstance('t2.large', 1, 1, key_pair, security_id, subnet_id, ips[4], stand_alone, "trusted-host")
+    print("Wait for trusted host to be created and configured (1 minute)...\n")

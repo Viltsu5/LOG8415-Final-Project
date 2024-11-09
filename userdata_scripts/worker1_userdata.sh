@@ -10,6 +10,7 @@ apt-get install -y mysql-server
 bash -c 'cat <<EOF >> /etc/mysql/my.cnf
 [mysqld]
 server-id=2
+bind-address = 0.0.0.0
 relay-log=relay-log
 gtid_mode=ON                   
 enforce_gtid_consistency=ON    

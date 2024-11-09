@@ -15,6 +15,7 @@ bind-address = 0.0.0.0
 gtid_mode=ON                   
 enforce_gtid_consistency=ON    
 log-bin=mysql-bin
+read-only = 0
 EOF'
 
 # Restart MySQL service
@@ -25,9 +26,16 @@ systemctl enable mysql
 PASSWORD="hattu"
 REPLICATION_USER="replica_user"
 REPLICATION_PASSWORD="takki"
+PROXY_USER="proxy_user"
+PROXY_PASSWORD="paita"
 
 # Create user and define password
 mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH 'mysql_native_password' BY '$PASSWORD';"
+mysql -u root -p"$PASSWORD" -e "FLUSH PRIVILEGES;"
+
+# Create proxy user
+mysql -u root -p"$PASSWORD" -e "CREATE USER '$PROXY_USER'@'%' IDENTIFIED WITH 'mysql_native_password' BY '$PROXY_PASSWORD';"
+mysql -u root -p"$PASSWORD" -e "GRANT ALL PRIVILEGES ON *.* TO '$PROXY_USER'@'%' WITH GRANT OPTION;"
 mysql -u root -p"$PASSWORD" -e "FLUSH PRIVILEGES;"
 
 # Create replication user
