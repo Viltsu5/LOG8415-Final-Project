@@ -50,11 +50,17 @@ if __name__ == "__main__":
     with open('userdata_scripts/manager_userdata.sh', 'r') as file:
         manager_userdata = file.read()
 
-    with open('userdata_scripts/worker_userdata.sh', 'r') as file:
-        worker_userdata = file.read()
+    with open('userdata_scripts/worker1_userdata.sh', 'r') as file:
+        worker1_userdata = file.read()
+
+    with open('userdata_scripts/worker2_userdata.sh', 'r') as file:
+        worker2_userdata = file.read()
 
     print("Creating instances...")
     # 3x t2.micro for 1 manager and 2 worker instances
     i.createInstance('t2.micro', 1, 1, key_pair, security_id, subnet_id, ips[0], manager_userdata, "manager-instance")
-    #i.createInstance('t2.micro', 1, 1, key_pair, security_id, subnet_id, ips[1], worker_userdata, "worker-instance")
-    #time.sleep(240)
+    print("Wait for manager to be created and configured (4 minutes)...")
+    time.sleep(240)
+    i.createInstance('t2.micro', 1, 1, key_pair, security_id, subnet_id, ips[1], worker1_userdata, "worker-instance")
+    i.createInstance('t2.micro', 1, 1, key_pair, security_id, subnet_id, ips[1], worker2_userdata, "worker-instance")
+
