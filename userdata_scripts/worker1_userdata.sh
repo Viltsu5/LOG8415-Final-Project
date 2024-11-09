@@ -22,7 +22,7 @@ systemctl enable mysql
 
 PASSWORD="hattu"
 
-# Create user and define password
+# Create user and define root password
 mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '$PASSWORD';"
 mysql -u root -p"$PASSWORD" -e "FLUSH PRIVILEGES;"
 
