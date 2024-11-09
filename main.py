@@ -57,10 +57,14 @@ if __name__ == "__main__":
         worker2_userdata = file.read()
 
     print("Creating instances...")
+
     # 3x t2.micro for 1 manager and 2 worker instances
     i.createInstance('t2.micro', 1, 1, key_pair, security_id, subnet_id, ips[0], manager_userdata, "manager-instance")
+
     print("Wait for manager to be created and configured (4 minutes)...")
+
     time.sleep(240)
+
     i.createInstance('t2.micro', 1, 1, key_pair, security_id, subnet_id, ips[1], worker1_userdata, "worker-instance")
-    i.createInstance('t2.micro', 1, 1, key_pair, security_id, subnet_id, ips[1], worker2_userdata, "worker-instance")
+    i.createInstance('t2.micro', 1, 1, key_pair, security_id, subnet_id, ips[2], worker2_userdata, "worker-instance")
 
