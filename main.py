@@ -47,6 +47,7 @@ if __name__ == "__main__":
     # Create security group
     security_id = i.createSecurityGroup(vpc_id, g.security_group_name)
 
+    # Read userdata scripts
     with open('userdata_scripts/manager_userdata.sh', 'r') as file:
         manager_userdata = file.read()
 
@@ -59,22 +60,21 @@ if __name__ == "__main__":
     with open('userdata_scripts/proxy_userdata.sh', 'r') as file:
         proxy_userdata = file.read()
 
-    with open('userdata_scripts/stand_alone.sh', 'r') as file:
-        stand_alone = file.read()
+    with open('userdata_scripts/trusted_host_userdata.sh', 'r') as file:
+        trusted_host_userdata = file.read()
 
     print("Creating instances...\n")
 
     # 3x t2.micro for 1 manager and 2 worker instances
     i.createInstance('t2.micro', 1, 1, key_pair, security_id, subnet_id, ips[0], manager_userdata, "manager")
 
-    print("Wait for manager to be created and configured (3 minutes)...\n")
+    print("Wait for manager to be created and configured (2 minutes)...\n")
 
     time.sleep(120)
 
     i.createInstance('t2.micro', 1, 1, key_pair, security_id, subnet_id, ips[1], worker1_userdata, "worker-1")
     i.createInstance('t2.micro', 1, 1, key_pair, security_id, subnet_id, ips[2], worker2_userdata, "worker-2")
-    
-    print("Wait for workers to be created and configured (2 minutes)...\n")
+    print("Wait for workers to be created and configured (1.5 minutes)...\n")
     time.sleep(90)
 
     # 1x t2.large for proxy instance
@@ -82,5 +82,6 @@ if __name__ == "__main__":
     print("Wait for proxy to be created and configured (1 minute)...\n")
     time.sleep(60)
 
-    i.createInstance('t2.large', 1, 1, key_pair, security_id, subnet_id, ips[4], stand_alone, "trusted-host")
+    i.createInstance('t2.large', 1, 1, key_pair, security_id, subnet_id, ips[4], trusted_host_userdata, "trusted-host")
     print("Wait for trusted host to be created and configured (1 minute)...\n")
+    time.sleep(60)

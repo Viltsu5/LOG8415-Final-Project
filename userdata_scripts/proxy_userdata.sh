@@ -12,7 +12,7 @@ pip3 install pymysql flask --break-system-packages;
 
 # Create the Python script
 cat <<EOF > /home/ubuntu/proxy.py
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file, Response
 import pymysql
 import random
 import logging
@@ -36,6 +36,11 @@ def get_connection(host):
         password=PASSWORD,
         database=DATABASE
     )
+
+# Check if the query is a write query
+def is_write_query(query):
+    write_keywords = ['INSERT', 'UPDATE', 'DELETE', 'CREATE', 'DROP', 'ALTER']
+    return any(keyword in query.upper() for keyword in write_keywords)
 
 def execute_query(query, is_write=False):
     if is_write:
@@ -64,13 +69,23 @@ def execute_query(query, is_write=False):
 def query():
     data = request.json
     query = data.get('query')
-    is_write = data.get('is_write', False)
+    is_write = is_write_query(query)
     
     try:
         result = execute_query(query, is_write)
         return jsonify(result), 200
     except Exception as e:
         logging.error(f"Error executing query: {e}")
+        return str(e), 500
+
+@app.route('/logs', methods=['GET'])
+def get_logs():
+    try:
+        with open('/home/ubuntu/proxy.log', 'r') as log_file:
+            log_content = log_file.read()
+        return Response(log_content, mimetype='text/plain')
+    except Exception as e:
+        logging.error(f"Error sending log file: {e}")
         return str(e), 500
 
 if __name__ == "__main__":
