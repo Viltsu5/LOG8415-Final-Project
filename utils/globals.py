@@ -3,5 +3,7 @@ subnet_path = 'C:/Users/vilja/.aws/subnet_id.txt'
 key_path = 'C:/Users/vilja/.aws/key.pem'
 ip_path = 'C:/Users/vilja/.aws/ip_addresses.txt'
 
+
 key_name = 'key'
-security_group_name = 'SecurityGroup'
+private_security_group_name = 'PrivateSecurityGroup'
+public_security_group_name = 'PublicSecurityGroup'

@@ -30,16 +30,19 @@ def delete_key_pairs(ec2, key_name):
     print(f"Key pair {key_name} deleted.")
 
 # Function to delete security groups
-def delete_security_group(ec2, security_group_name):
+def delete_security_group(ec2, public_security_group_name, private_security_group_name):
     ec2 = boto3.client('ec2')
     
-    ec2.delete_security_group(GroupName=security_group_name)
-    print(f"Security group {security_group_name} deleted.")
+    ec2.delete_security_group(GroupName=private_security_group_name)
+    print(f"Security group {private_security_group_name} deleted.")
+
+    ec2.delete_security_group(GroupName=public_security_group_name)
+    print(f"Security group {public_security_group_name} deleted.")
 
 # Main function to execute the steps
-def clear_all(ec2, key_name, security_group_name):
+def clear_all(ec2, key_name, public_security_group_name, private_security_group_name):
     instance_ids = terminate_instances()
     wait_for_termination(instance_ids)
     delete_key_pairs(ec2, key_name)
-    delete_security_group(ec2, security_group_name)
+    delete_security_group(ec2, public_security_group_name, private_security_group_name)
     print("All resources cleared.")

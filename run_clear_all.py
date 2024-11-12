@@ -9,4 +9,5 @@ Description: This script performs a cleanup operation by deleting the specified 
 
 ec2 = boto3.client('ec2')
 
-clear_all.clear_all(ec2, g.key_name, g.security_group_name)
+clear_all.clear_all(ec2, g.key_name, g.public_security_group_name, g.private_security_group_name)
+
