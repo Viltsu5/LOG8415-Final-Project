@@ -8,7 +8,7 @@ apt-get update -y
 apt-get install -y python3 python3-pip
 
 # Install Flask and requests
-pip3 install flask requests --break-system-packages;
+pip3 install flask requests --break-system-packages
 
 # Create the Python script
 cat <<EOF > /home/ubuntu/trusted_host.py

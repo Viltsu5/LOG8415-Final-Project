@@ -4,6 +4,7 @@ from utils import globals as g
 import boto3
 import stat
 from functions import setup_instances as i
+from benchmark import run_benchmark as b
 
 
 '''
@@ -89,8 +90,10 @@ if __name__ == "__main__":
     # 1x t2.large for public host instance
     i.createInstance('t2.large', 1, 1, key_pair, public_security_id, subnet_id, ips[5], public_host_userdata, "public-host")
     print("Wait for public host to be created and configured (1 minute)...\n")
-    time.sleep(60)
+    time.sleep(120)
 
     print("Instances created successfully!\n")
 
-    
+    # Run benchmark
+    #b()
+

@@ -101,6 +101,13 @@ def createPrivateSecurityGroup(vpc_id: str, group_name: str, public_security_gro
             'FromPort': -1,
             'ToPort': -1,
             'UserIdGroupPairs': [{'GroupId': security_group_id}]
+        },
+
+        {
+            'IpProtocol': 'tcp',
+            'FromPort': 22,
+            'ToPort': 22,
+            'IpRanges': [{'CidrIp': '0.0.0.0/0'}]
         }
     
         ]

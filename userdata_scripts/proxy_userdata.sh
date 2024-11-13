@@ -8,7 +8,7 @@ apt-get update -y
 apt-get install -y python3 python3-pip
 
 # Install pymysql, Flask, and ping3
-pip3 install pymysql flask ping3 --break-system-packages;
+pip3 install pymysql flask ping3 --break-system-packages
 
 # Create the Python script
 cat <<EOF > /home/ubuntu/proxy.py
