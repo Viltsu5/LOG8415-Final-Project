@@ -93,6 +93,14 @@ def createPrivateSecurityGroup(vpc_id: str, group_name: str, public_security_gro
             'FromPort': 3306,
             'ToPort': 3306,
             'UserIdGroupPairs': [{'GroupId': security_group_id}]
+        },
+
+        # Allow trffic on IP protocol icmp so that proxy can ping the workers.
+        {
+            'IpProtocol': 'icmp',
+            'FromPort': -1,
+            'ToPort': -1,
+            'UserIdGroupPairs': [{'GroupId': security_group_id}]
         }
     
         ]

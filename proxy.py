@@ -1,17 +1,3 @@
-#!/bin/bash
-
-# Redirect all output to a log file
-exec > /home/ubuntu/proxy_userdata.log 2>&1
-
-# Update and install Python and pip
-apt-get update -y
-apt-get install -y python3 python3-pip
-
-# Install pymysql, Flask, and ping3
-pip3 install pymysql flask ping3 --break-system-packages;
-
-# Create the Python script
-cat <<EOF > /home/ubuntu/proxy.py
 from flask import Flask, request, jsonify, Response
 import pymysql
 import random
@@ -137,10 +123,3 @@ def get_logs():
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
-EOF
-
-# Make the Python script executable
-chmod +x /home/ubuntu/proxy.py
-
-# Run the Python script
-python3 /home/ubuntu/proxy.py

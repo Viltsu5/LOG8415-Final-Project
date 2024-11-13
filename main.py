@@ -82,7 +82,6 @@ if __name__ == "__main__":
     # 1x t2.large for proxy instance
     i.createInstance('t2.large', 1, 1, key_pair, private_security_id, subnet_id, ips[3], proxy_userdata, "proxy")
     print("Wait for proxy to be created and configured (1 minute)...\n")
-    time.sleep(60)
     # 1x t2.large for trusted host instance
     i.createInstance('t2.large', 1, 1, key_pair, private_security_id, subnet_id, ips[4], trusted_host_userdata, "trusted-host")
     print("Wait for trusted host to be created and configured (1 minute)...\n")
@@ -91,3 +90,7 @@ if __name__ == "__main__":
     i.createInstance('t2.large', 1, 1, key_pair, public_security_id, subnet_id, ips[5], public_host_userdata, "public-host")
     print("Wait for public host to be created and configured (1 minute)...\n")
     time.sleep(60)
+
+    print("Instances created successfully!\n")
+
+    

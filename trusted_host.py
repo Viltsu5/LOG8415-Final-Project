@@ -1,17 +1,3 @@
-#!/bin/bash
-
-# Redirect all output to a log file
-exec > /home/ubuntu/trusted_host_userdata.log 2>&1
-
-# Update and install Python and pip
-apt-get update -y
-apt-get install -y python3 python3-pip
-
-# Install Flask and requests
-pip3 install flask requests --break-system-packages;
-
-# Create the Python script
-cat <<EOF > /home/ubuntu/trusted_host.py
 from flask import Flask, request, jsonify, Response
 import requests
 import logging
@@ -83,10 +69,3 @@ def get_logs():
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
-EOF
-
-# Make the Python script executable
-chmod +x /home/ubuntu/trusted_host.py
-
-# Run the Python script
-python3 /home/ubuntu/trusted_host.py
