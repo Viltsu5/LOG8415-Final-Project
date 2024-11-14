@@ -3,12 +3,16 @@ import boto3
 def get_public_ip(tag_key, tag_value):
     ec2 = boto3.client('ec2')
     
-    # Describe instances with the wanted tag
+    # Describe instances with the wanted tag and running state
     response = ec2.describe_instances(
         Filters=[
             {
                 'Name': f'tag:{tag_key}',
                 'Values': [tag_value]
+            },
+            {
+                'Name': 'instance-state-name',
+                'Values': ['running']
             }
         ]
     )

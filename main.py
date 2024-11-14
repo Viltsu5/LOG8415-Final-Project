@@ -5,6 +5,9 @@ import boto3
 import stat
 from functions import setup_instances as i
 from benchmark import run_benchmark as b
+import paramiko
+from utils import get_public_ip as gp
+from utils import remove_permission as rp
 
 
 '''
@@ -94,6 +97,46 @@ if __name__ == "__main__":
 
     print("Instances created successfully!\n")
 
-    # Run benchmark
-    #b()
+    public_host_ip = gp.get_public_ip('Name', 'public-host')
+    trusted_host_ip = gp.get_public_ip('Name', 'trusted-host')
+    proxy_ip = gp.get_public_ip('Name', 'proxy')
 
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+    print(f"Connecting to {proxy_ip} using SSH...")
+    # Connect to the instance
+    ssh.connect(proxy_ip, username='ubuntu', key_filename=g.key_path)
+
+    print("Connected! Now running 'python3 on the proxy'...")
+    # Run the flask app on the proxy in the background
+    ssh.exec_command('sudo nohup python3 proxy.py > proxy.log 2>&1 &')
+    ssh.close()
+
+    print(f"Connecting to {trusted_host_ip} using SSH...")
+    # Connect to the instance
+    ssh.connect(trusted_host_ip, username='ubuntu', key_filename=g.key_path)
+
+    print("Connected! Now running 'python3 on the trusted host'...")
+    # Run the flask app on the trusted host in the background
+    ssh.exec_command('sudo nohup python3 trusted_host.py > trusted_host.log 2>&1 &')
+    ssh.close()
+
+    print(f"Connecting to {public_host_ip} using SSH...")
+    # Connect to the instance
+    ssh.connect(public_host_ip, username='ubuntu', key_filename=g.key_path)
+
+    print("Connected! Now running 'python3 on the public-host'...")
+    # Run the flask app on the public host in the background
+    ssh.exec_command('sudo nohup python3 gatekeeper.py > gatekeeper.log 2>&1 &')
+    ssh.close()
+
+    print("Instances are now running the Flask apps!\n")
+
+    response = rp.remove_permission(private_security_id, 'tcp', 22, 22, '0.0.0.0/0')
+
+    print("Security group permissions updated.\n")
+
+    print("Running the benchmark")
+    # Run benchmark
+    b()

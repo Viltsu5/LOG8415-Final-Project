@@ -17,12 +17,12 @@ TRUSTED_RANDOM_URL = 'http://172.31.32.104:5000/random'
 TRUSTED_CUSTOMIZED_URL = 'http://172.31.32.104:5000/customized'
 TRUSTED_LOGS_URL = 'http://172.31.32.104:5000/logs'
 
-# User data
+# Username and password
 users = {
     "admin": generate_password_hash("password")
 }
 
-# JSON schema for input validation
+# JSON strucutre to compare the input with
 query_schema = {
     "type": "object",
     "properties": {
