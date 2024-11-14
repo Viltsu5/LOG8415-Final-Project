@@ -7,14 +7,11 @@ from functions import setup_instances as i
 from benchmark import run_benchmark as b
 import paramiko
 from utils import get_public_ip as gp
-from utils import remove_permission as rp
+from utils import help_functions as hf
 
 
-'''
-Description: Main script to set up AWS EC2 instances, including key pair creation, security group setup, 
-             instance creation, and user data configuration.
-
-'''
+# Main script that calls other functions to create the instances and run the benchmark.
+# This can be run by executing run_main.sh file.
 
 if __name__ == "__main__":
 
@@ -31,7 +28,6 @@ if __name__ == "__main__":
         subnet_id = file.read().strip()
     with open(g.ip_path, 'r') as file:
         ips = [line.strip() for line in file.readlines()]
-
     
     # Delete keypair with same name if it exists
     ec2.KeyPair(g.key_name).delete()
@@ -85,14 +81,14 @@ if __name__ == "__main__":
 
     # 1x t2.large for proxy instance
     i.createInstance('t2.large', 1, 1, key_pair, private_security_id, subnet_id, ips[3], proxy_userdata, "proxy")
-    print("Wait for proxy to be created and configured (1 minute)...\n")
     # 1x t2.large for trusted host instance
     i.createInstance('t2.large', 1, 1, key_pair, private_security_id, subnet_id, ips[4], trusted_host_userdata, "trusted-host")
-    print("Wait for trusted host to be created and configured (1 minute)...\n")
+    print("Wait for gatekeeper instances to be created and configured (1 minute)...\n")
     time.sleep(60)
+
     # 1x t2.large for public host instance
     i.createInstance('t2.large', 1, 1, key_pair, public_security_id, subnet_id, ips[5], public_host_userdata, "public-host")
-    print("Wait for public host to be created and configured (1 minute)...\n")
+    print("Wait for public host to be created and configured (2 minute)...\n")
     time.sleep(120)
 
     print("Instances created successfully!\n")
@@ -127,16 +123,27 @@ if __name__ == "__main__":
     ssh.connect(public_host_ip, username='ubuntu', key_filename=g.key_path)
 
     print("Connected! Now running 'python3 on the public-host'...")
+
+    # Transfer the authentication file to the public host
+    sftp = ssh.open_sftp()
+    sftp.put(g.authentication_path, '/home/ubuntu/authentication.txt')
+    sftp.close()
+    
     # Run the flask app on the public host in the background
     ssh.exec_command('sudo nohup python3 gatekeeper.py > gatekeeper.log 2>&1 &')
     ssh.close()
 
     print("Instances are now running the Flask apps!\n")
 
-    response = rp.remove_permission(private_security_id, 'tcp', 22, 22, '0.0.0.0/0')
+    # Remove the SSH access from the private security group.
+    response = hf.remove_permission(private_security_id, 'tcp', 22, 22, '0.0.0.0/0')
 
     print("Security group permissions updated.\n")
 
     print("Running the benchmark")
     # Run benchmark
     b()
+
+    print("Writing benchmark log to file as benchmark_log.txt")
+    hf.write_proxy_log_to_file()
+

@@ -4,12 +4,18 @@ import time
 from requests.auth import HTTPBasicAuth
 import matplotlib.pyplot as plt
 from utils import get_public_ip as gp
+from utils import globals as g
 
-# Get the public IP of the public host
-URL = gp.get_public_ip('Name', 'public-host')
-USERNAME = 'admin'
-PASSWORD = 'password'
+
 NUM_REQUESTS = 1000
+PAUSE_DURATION = 15  # Pause duration in seconds
+
+# Database credentials
+with open(g.authentication_path, 'r') as file:
+    data = file.read().splitlines()
+    USERNAME = data[0]
+    PASSWORD = data[1]
+
 
 # Sample read query
 READ_QUERY = "SELECT * FROM actor WHERE first_name = 'Aarne';"
@@ -32,56 +38,64 @@ def send_read_request(url):
 
 # Benchmarking function
 def benchmark_test(url):
-    start_time = time.time()
+    write_start_time = time.time()
 
     # Send write requests
     with concurrent.futures.ThreadPoolExecutor() as executor:
         write_futures = [executor.submit(send_write_request, url, i) for i in range(NUM_REQUESTS)]
         write_results = [future.result() for future in concurrent.futures.as_completed(write_futures)]
+    
+    write_end_time = time.time()
 
+    # Pause before sending read requests
+    time.sleep(PAUSE_DURATION)
+
+    start_read_time = time.time()
     # Send read requests
     with concurrent.futures.ThreadPoolExecutor() as executor:
         read_futures = [executor.submit(send_read_request, url) for _ in range(NUM_REQUESTS)]
         read_results = [future.result() for future in concurrent.futures.as_completed(read_futures)]
 
-    end_time = time.time()
-    duration = end_time - start_time
+    end_read_time = time.time()
 
-    return len(write_results), len(read_results), duration
+    write_duration = write_end_time - write_start_time
+    read_duration = end_read_time - start_read_time
+
+    return write_duration, read_duration
 
 # Plotting function
 def plot_results(results):
     labels = ['Direct', 'Random', 'Customized']
-    write_counts = [result[0] for result in results]
-    read_counts = [result[1] for result in results]
-    durations = [result[2] for result in results]
+
+    write_duration = [result[0] for result in results]
+    read_duration = [result[1] for result in results]
 
     x = range(len(labels))
 
-    fig, ax1 = plt.subplots()
+    fig, ax = plt.subplots()
 
-    ax2 = ax1.twinx()
-    ax1.bar(x, write_counts, color='g', width=0.4, align='center', label='Write Requests')
-    ax2.bar([p + 0.4 for p in x], read_counts, color='b', width=0.4, align='center', label='Read Requests')
+    # Plot total duration for write and read operations
+    ax.bar(x, write_duration, color='g', width=0.4, align='center', label='Total Write Duration')
+    ax.bar([p + 0.4 for p in x], read_duration, color='b', width=0.4, align='center', label='Total Read Duration')
 
-    ax1.set_xlabel('Query Patterns')
-    ax1.set_ylabel('Number of Write Requests', color='g')
-    ax2.set_ylabel('Number of Read Requests', color='b')
-    ax1.set_xticks([p + 0.2 for p in x])
-    ax1.set_xticklabels(labels)
-    ax1.legend(loc='upper left')
-    ax2.legend(loc='upper right')
+    ax.set_xlabel('Query Patterns')
+    ax.set_ylabel('Total Duration (seconds)')
+    ax.set_xticks([p + 0.2 for p in x])
+    ax.set_xticklabels(labels)
+    ax.legend(loc='upper left')
 
-    plt.title('Benchmark Results')
+    plt.title('Benchmark Results: Total Duration of 100 Write and 100 Read Operations')
     plt.show()
 
 # Configuration
 def run_benchmark():
 
+    IP = gp.get_public_ip('Name', 'public-host')
+
     urls = [
-        f"http://{URL}:5001/direct",
-        f"http://{URL}:5001/random",
-        f"http://{URL}:5001/customized"
+        f"http://{IP}:5001/direct",
+        f"http://{IP}:5001/random",
+        f"http://{IP}:5001/customized"
     ]
 
     results = []
