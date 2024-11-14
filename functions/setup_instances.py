@@ -1,7 +1,7 @@
 import boto3
 
 '''
-Description: Creates a security group in the specified VPC that allows HTTP traffic on port 80 and SSH on port 22.
+Description: Creates a security group in the specified VPC.
 Inputs: 
     vpc_id (str) - The ID of the VPC where the security group will be created.
     group_name (str) - The name to assign to the new security group.
@@ -102,6 +102,8 @@ def createPrivateSecurityGroup(vpc_id: str, group_name: str, public_security_gro
             'ToPort': -1,
             'UserIdGroupPairs': [{'GroupId': security_group_id}]
         },
+        
+        # Allow traffic on port 22 from anywhere (for SSH access)
 
         {
             'IpProtocol': 'tcp',

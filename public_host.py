@@ -17,9 +17,14 @@ TRUSTED_RANDOM_URL = 'http://172.31.32.104:5000/random'
 TRUSTED_CUSTOMIZED_URL = 'http://172.31.32.104:5000/customized'
 TRUSTED_LOGS_URL = 'http://172.31.32.104:5000/logs'
 
+with open('/home/ubuntu/authentication.txt', 'r') as f:
+    data = f.read().splitlines()
+    USERNAME = data[0]
+    PASSWORD = data[1]
+
 # Username and password
 users = {
-    "admin": generate_password_hash("password")
+    USERNAME: generate_password_hash(PASSWORD)
 }
 
 # JSON strucutre to compare the input with
