@@ -47,9 +47,6 @@ def benchmark_test(url):
     
     write_end_time = time.time()
 
-    # Pause before sending read requests
-    time.sleep(PAUSE_DURATION)
-
     start_read_time = time.time()
     # Send read requests
     with concurrent.futures.ThreadPoolExecutor() as executor:
@@ -102,5 +99,6 @@ def run_benchmark():
     for url in urls:
         print(f"Running benchmark for {url}")
         results.append(benchmark_test(url))
+        time.sleep(PAUSE_DURATION)
 
     plot_results(results)
