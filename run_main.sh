@@ -2,7 +2,7 @@
 
 
 # Run the main.py script
-python3 main.py
+/c/Users/vilja/AppData/Local/Programs/Python/Python312/python.exe main.py > output.log 2>&1
 
 
 
