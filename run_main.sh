@@ -2,7 +2,7 @@
 
 
 # Run the main.py script
-python3 main.py
+python main.py
 
 
 
